@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="VivaDBMS:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/VivaDBMS_jar</output-path>
+    <root id="archive" name="VivaDBMS.jar">
+      <element id="module-output" name="VivaDBMS" />
+    </root>
+  </artifact>
+</component>
