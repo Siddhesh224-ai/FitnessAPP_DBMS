@@ -1,22 +1,28 @@
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.sql.*;
 
 public class WorkoutService {
-    public static void logWorkout(long workoutId, long userId, String date) {
-        String sql = "INSERT INTO workout (workout_id, user_id, date) VALUES (?, ?, ?)";
+    public static long logWorkout(long userId, String workoutDate) {
+        String sql = "INSERT INTO workout (user_id, date) VALUES (?, ?)";
+        long generatedWorkoutId = -1;
 
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            stmt.setLong(1, workoutId);
-            stmt.setLong(2, userId);
-            stmt.setString(3, date);
+            pstmt.setLong(1, userId);
+            pstmt.setDate(2, Date.valueOf(workoutDate)); // Ensure workoutDate is "YYYY-MM-DD" format
+            pstmt.executeUpdate();
 
-            stmt.executeUpdate();
-            System.out.println("Workout logged successfully.");
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                generatedWorkoutId = rs.getLong(1);
+                System.out.println("Workout logged successfully with ID: " + generatedWorkoutId);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return generatedWorkoutId;
     }
 
     public static void addExerciseToWorkout(long workoutId, long exerciseId, int reps, int sets) {
